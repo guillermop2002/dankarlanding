@@ -36,45 +36,109 @@
     /* FAQ toggle */
     details summary::-webkit-details-marker { display: none; }
     details summary { list-style: none; }
-    details[open] .chevron { transform: rotate(180deg); }
+    details[open] .chevron { transform: rotate(90deg); }
     .chevron { transition: transform 0.2s; }
+
+    /* Mobile menu */
+    .mobile-menu {
+      transform: translateX(100%);
+      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .mobile-menu.open {
+      transform: translateX(0);
+    }
+    .mobile-menu-overlay {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+    }
+    .mobile-menu-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    /* Hamburger icon animation */
+    .hamburger-line {
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    .hamburger-active .hamburger-line:nth-child(1) {
+      transform: translateY(7px) rotate(45deg);
+    }
+    .hamburger-active .hamburger-line:nth-child(2) {
+      opacity: 0;
+    }
+    .hamburger-active .hamburger-line:nth-child(3) {
+      transform: translateY(-7px) rotate(-45deg);
+    }
   </style>
 </head>
 <body class="min-h-screen bg-white text-gray-900 overflow-x-hidden">
 
   <!-- ─── NAVBAR ─── -->
-  <header class="absolute top-0 left-0 right-0 z-50">
+  <header id="main-header" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       <a href="/" class="flex items-center gap-2.5">
-        <i data-lucide="leaf" class="w-7 h-7 text-green-600"></i>
-        <span class="text-xl font-bold text-gray-900">Annonia</span>
+        <i data-lucide="leaf" class="header-icon w-7 h-7 text-white drop-shadow-md transition-colors duration-300"></i>
+        <span class="header-logo text-xl font-bold text-white drop-shadow-md transition-colors duration-300">Annonia</span>
       </a>
-      <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-600">
-        <a href="#funcionalidades" class="hover:text-green-600 transition-colors">Funcionalidades</a>
-        <a href="#como-funciona" class="hover:text-green-600 transition-colors">Cómo funciona</a>
-        <a href="#precios" class="hover:text-green-600 transition-colors">Precios</a>
-        <a href="#faq" class="hover:text-green-600 transition-colors">FAQ</a>
+      <nav class="hidden md:flex items-center gap-8 text-base font-extrabold drop-shadow-md">
+        <a href="#como-funciona" class="header-link text-white hover:text-green-200 transition-colors duration-300">Cómo funciona</a>
+        <a href="#faq" class="header-link text-white hover:text-green-200 transition-colors duration-300">FAQ</a>
       </nav>
-      <div class="flex items-center gap-3">
-        <a href="/login" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-green-600 transition-colors">
+      <div class="hidden md:flex items-center gap-3">
+        <a href="/login" class="header-link px-4 py-2 text-base font-extrabold text-white drop-shadow-md hover:text-green-200 transition-colors duration-300">
           Iniciar sesión
         </a>
         <a href="/registro" class="px-5 py-2.5 text-sm font-semibold rounded-xl bg-green-600 text-white hover:bg-green-700 transition-colors shadow-sm shadow-green-600/20">
           Empezar gratis
         </a>
       </div>
+      <!-- Mobile hamburger button -->
+      <button id="hamburger-btn" class="md:hidden flex flex-col items-center justify-center w-10 h-10 gap-[5px] z-[60]" aria-label="Abrir menú">
+        <span class="hamburger-line block w-6 h-[2px] bg-white rounded-full drop-shadow-md transition-colors duration-300"></span>
+        <span class="hamburger-line block w-6 h-[2px] bg-white rounded-full drop-shadow-md transition-colors duration-300"></span>
+        <span class="hamburger-line block w-6 h-[2px] bg-white rounded-full drop-shadow-md transition-colors duration-300"></span>
+      </button>
     </div>
   </header>
 
-  <!-- ─── HERO ─── -->
-  <section class="relative min-h-[480px] sm:min-h-[520px] lg:min-h-[560px] flex items-end bg-green-50 overflow-hidden">
-    <!-- Background placeholder -->
-    <div class="absolute inset-0 bg-gradient-to-b from-green-100/80 via-green-50/60 to-green-50/90 flex items-center justify-center">
-      <span class="text-green-300/60 text-lg font-medium">Falta imagen</span>
+  <!-- Mobile menu overlay -->
+  <div id="mobile-overlay" class="mobile-menu-overlay fixed inset-0 bg-black/40 z-[55] md:hidden"></div>
+
+  <!-- Mobile slide-in menu (full screen) -->
+  <div id="mobile-menu" class="mobile-menu fixed top-0 right-0 w-full h-full bg-white z-[60] shadow-2xl md:hidden overflow-y-auto">
+    <div class="flex items-center justify-between px-6 h-16">
+      <a href="/" class="flex items-center gap-2">
+        <i data-lucide="leaf" class="w-6 h-6 text-green-600"></i>
+        <span class="text-lg font-bold text-green-600">Annonia</span>
+      </a>
+      <button id="close-menu-btn" class="w-10 h-10 flex items-center justify-center text-gray-800 hover:text-gray-900 transition-colors" aria-label="Cerrar menú">
+        <i data-lucide="x" class="w-7 h-7"></i>
+      </button>
     </div>
+    <nav class="flex flex-col px-6 pt-6">
+      <a href="#como-funciona" class="mobile-menu-link py-5 text-xl font-bold text-gray-900 border-b border-gray-200 transition-colors hover:text-green-700">Cómo funciona</a>
+      <a href="#faq" class="mobile-menu-link py-5 text-xl font-bold text-gray-900 border-b border-gray-200 transition-colors hover:text-green-700">FAQ</a>
+      <a href="/login" class="mobile-menu-link py-5 text-xl font-bold text-gray-900 border-b border-gray-200 transition-colors hover:text-green-700">Iniciar sesión</a>
+      <a href="/registro" class="mobile-menu-link py-5 text-xl font-bold text-gray-900 border-b border-gray-200 transition-colors hover:text-green-700">Empezar gratis</a>
+    </nav>
+  </div>
+
+  <!-- ─── HERO ─── -->
+  <section class="relative bg-green-50 overflow-hidden">
+    <!-- Background image: cropped square on mobile, natural aspect on desktop -->
+    <img src="img/banner.png" alt="Banner Annonia" class="w-full block relative z-0 object-cover aspect-square sm:aspect-auto sm:h-auto object-[75%_center] sm:object-center" />
+
+    <!-- Soft vignette (darkened edges + center light) -->
+    <div class="absolute inset-0 z-[1] pointer-events-none" style="background: radial-gradient(ellipse at center, rgba(0,0,0,0.12) 22%, rgba(0,0,0,0.55) 65%, rgba(0,0,0,0.85) 100%);"></div>
+
+    <!-- Soft blurred edges (left & right) -->
+    <div class="absolute inset-y-0 left-0 w-[24%] sm:w-[20%] lg:w-[18%] z-[2] pointer-events-none" style="backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px); -webkit-mask-image: linear-gradient(to right, black 0%, transparent 100%); mask-image: linear-gradient(to right, black 0%, transparent 100%);"></div>
+    <div class="absolute inset-y-0 right-0 w-[24%] sm:w-[20%] lg:w-[18%] z-[2] pointer-events-none" style="backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px); -webkit-mask-image: linear-gradient(to left, black 0%, transparent 100%); mask-image: linear-gradient(to left, black 0%, transparent 100%);"></div>
+    <!-- Soft blurred top & bottom -->
+    <div class="absolute inset-x-0 top-0 h-[20%] z-[2] pointer-events-none" style="backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); -webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 100%); mask-image: linear-gradient(to bottom, black 0%, transparent 100%);"></div>
 
     <!-- Floating notification card -->
-    <div class="hidden lg:block absolute top-[35%] right-[8%] z-10 reveal from-right" style="transition-delay:600ms">
+    <div class="hidden lg:block absolute top-[55%] right-[12%] z-20 reveal from-right" style="transition-delay:600ms">
       <div class="bg-white rounded-2xl shadow-xl shadow-black/10 px-5 py-4 flex items-start gap-3 max-w-xs">
         <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center shrink-0">
           <i data-lucide="leaf" class="w-5 h-5 text-green-600"></i>
@@ -89,72 +153,29 @@
     </div>
 
     <!-- Hero text overlay -->
-    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 sm:pb-14 lg:pb-16 pt-24 w-full">
-      <div class="reveal" style="transition-delay:100ms">
-        <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-[1.1] text-gray-900 max-w-2xl">
-          Nutrición <span class="bg-green-200/70 px-1.5 -mx-0.5">personalizada</span>
-          <br />
-          al alcance de todos
-        </h1>
-      </div>
-      <div class="reveal" style="transition-delay:250ms">
-        <p class="text-lg sm:text-xl text-gray-600 mt-6 mb-8 max-w-xl leading-relaxed">
-          El software para dietistas que te permite crear dietas personalizadas, gestionar pacientes y hacer crecer tu consulta con inteligencia artificial.
-        </p>
-      </div>
-      <div class="reveal" style="transition-delay:350ms">
-        <div class="flex flex-col sm:flex-row items-start gap-4">
-          <a href="/registro" class="group px-8 py-4 text-base font-semibold rounded-2xl bg-green-600 text-white hover:bg-green-700 transition-all shadow-lg shadow-green-600/25 hover:shadow-xl hover:shadow-green-600/30 hover:-translate-y-0.5 flex items-center gap-2">
-            Empieza gratis
-            <i data-lucide="arrow-right" class="w-5 h-5 group-hover:translate-x-0.5 transition-transform"></i>
-          </a>
-          <a href="#como-funciona" class="px-8 py-4 text-base font-semibold rounded-2xl border-2 border-green-200 text-green-700 hover:bg-white/60 hover:border-green-300 transition-all">
-            Ver cómo funciona
-          </a>
+    <div class="absolute inset-x-0 bottom-[28%] sm:bottom-[46%] lg:bottom-[48%] z-10">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pl-3 sm:pl-5 lg:pl-8 xl:pl-12">
+        <div class="reveal" style="transition-delay:100ms">
+          <h1 class="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-black tracking-tight leading-[1.1] text-white drop-shadow-md max-w-3xl">
+            Nutrición <span class="bg-[#bdd9c5] px-1.5 -mx-0.5 text-gray-900 drop-shadow-none">personalizada</span>
+            <br />
+            para cada paciente
+          </h1>
         </div>
-        <p class="mt-5 text-sm text-gray-400">
-          14 días gratis · Sin tarjeta · Cancela cuando quieras
-        </p>
       </div>
     </div>
   </section>
 
-  <!-- ─── WAVE hero → stats ─── -->
-  <div class="relative">
-    <svg viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-auto block -mb-px bg-green-50">
-      <path d="M0 80V40C240 0 480 0 720 20C960 40 1200 60 1440 30V80H0Z" fill="#166534" />
+  <!-- ─── WAVE hero → stats (overlaps onto image as a top layer) ─── -->
+  <div class="relative -mt-[3vw] sm:-mt-[3vw] lg:-mt-[3vw] z-30">
+    <svg viewBox="0 0 1440 80" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-[5vw] sm:h-[4vw] lg:h-[3.5vw] block">
+      <path d="M0 80V40C240 0 480 0 720 20C960 40 1200 60 1440 30V80H0Z" fill="#bdd9c5" />
     </svg>
-    <section class="bg-green-800">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
-        <div class="flex flex-col lg:flex-row items-center justify-between gap-6">
-          <p class="text-sm font-medium text-green-200 shrink-0">
-            El software elegido por dietistas y nutricionistas
-          </p>
-          <div class="flex flex-wrap items-center justify-center gap-8 sm:gap-12">
-            <div class="text-center">
-              <p class="text-2xl sm:text-3xl font-bold text-white">2.600+</p>
-              <p class="text-xs text-green-300 mt-0.5">Alimentos</p>
-            </div>
-            <div class="text-center">
-              <p class="text-2xl sm:text-3xl font-bold text-white">IA</p>
-              <p class="text-xs text-green-300 mt-0.5">Generación</p>
-            </div>
-            <div class="text-center">
-              <p class="text-2xl sm:text-3xl font-bold text-white">100%</p>
-              <p class="text-xs text-green-300 mt-0.5">RGPD</p>
-            </div>
-            <div class="text-center">
-              <p class="text-2xl sm:text-3xl font-bold text-white">24/7</p>
-              <p class="text-xs text-green-300 mt-0.5">Disponible</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+    <section class="bg-[#bdd9c5] -mt-px h-12 sm:h-16 lg:h-20"></section>
   </div>
 
   <!-- ─── FOOD ICONS + HEADLINE ─── -->
-  <section class="relative py-20 sm:py-28 overflow-hidden bg-gradient-to-b from-green-50/40 to-white">
+  <section class="relative pt-20 pb-16 sm:pt-24 sm:pb-20 overflow-hidden bg-gradient-to-b from-green-50/40 to-white">
     <div class="absolute inset-0 pointer-events-none select-none" aria-hidden="true">
       <i data-lucide="utensils" class="absolute top-[2%] left-[2%] w-8 h-8 text-green-300 opacity-[0.55]" style="transform:rotate(-15deg)"></i>
       <i data-lucide="fish" class="absolute top-[3%] left-[11%] w-9 h-9 text-green-300 opacity-[0.50]" style="transform:rotate(5deg)"></i>
@@ -193,33 +214,24 @@
 
   <!-- ─── SHOWCASE: Cómo funciona ─── -->
   <section id="como-funciona">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-16 sm:space-y-24">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-8 sm:pt-4 sm:pb-12 space-y-16 sm:space-y-24">
 
       <!-- Para dietistas -->
       <div class="reveal from-left" style="transition-delay:100ms">
-        <div class="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
+        <div class="flex flex-col-reverse lg:flex-row items-center gap-10 lg:gap-16">
           <div class="flex-1">
-            <span class="inline-block px-3 py-1 rounded-full bg-green-50 text-green-600 text-xs font-semibold mb-4 tracking-wide uppercase">Para dietistas</span>
-            <h3 class="text-2xl sm:text-3xl font-bold tracking-tight mb-4">Software de gestión para tu consulta de nutrición</h3>
-            <p class="text-gray-400 leading-relaxed mb-6">Dedica más tiempo a tus pacientes y menos a tareas administrativas. Annonia centraliza fichas, planes alimenticios, citas y mensajería en un software de nutrición diseñado por y para dietistas.</p>
-            <ul class="space-y-3 mb-8">
-              <li class="flex items-start gap-2.5 text-sm text-gray-500"><i data-lucide="check" class="w-4 h-4 text-green-600 shrink-0 mt-0.5"></i>Planes alimenticios con cálculo automático de macros</li>
-              <li class="flex items-start gap-2.5 text-sm text-gray-500"><i data-lucide="check" class="w-4 h-4 text-green-600 shrink-0 mt-0.5"></i>Recetas propias y globales con ingredientes vinculados</li>
-              <li class="flex items-start gap-2.5 text-sm text-gray-500"><i data-lucide="check" class="w-4 h-4 text-green-600 shrink-0 mt-0.5"></i>Generación de dietas con inteligencia artificial</li>
-              <li class="flex items-start gap-2.5 text-sm text-gray-500"><i data-lucide="check" class="w-4 h-4 text-green-600 shrink-0 mt-0.5"></i>Exportación de informes PDF profesionales</li>
-            </ul>
+            <h3 class="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight mb-5 leading-[1.2]">
+              <span class="bg-[#bdd9c5] px-1.5 -mx-0.5">Para dietistas:</span> Software de gestión para tu consulta de nutrición
+            </h3>
+            <p class="text-base sm:text-lg text-gray-500 leading-relaxed mb-7">Dedica más tiempo a tus pacientes y menos a tareas administrativas. Annonia centraliza fichas, planes alimenticios, citas y mensajería en un software de nutrición diseñado por y para dietistas.</p>
             <a href="/registro" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-green-600 text-white text-sm font-semibold hover:bg-green-700 transition-all shadow-sm shadow-green-600/20 hover:-translate-y-0.5">
               Empieza gratis <i data-lucide="arrow-right" class="w-4 h-4"></i>
             </a>
           </div>
-          <div class="flex-1 w-full max-w-sm lg:max-w-md">
-            <div class="aspect-[4/3] rounded-2xl bg-gradient-to-br from-green-50 to-green-100/50 border border-green-200/60 flex items-center justify-center shadow-sm">
-              <div class="grid grid-cols-2 gap-4 p-8">
-                <div class="flex flex-col items-center gap-2 p-4 rounded-xl bg-white shadow-sm border border-green-100/60"><i data-lucide="utensils" class="w-7 h-7 text-green-600"></i><p class="text-xs font-medium text-gray-500">Planificar</p></div>
-                <div class="flex flex-col items-center gap-2 p-4 rounded-xl bg-white shadow-sm border border-green-100/60"><i data-lucide="bar-chart-3" class="w-7 h-7 text-green-600"></i><p class="text-xs font-medium text-gray-500">Analizar</p></div>
-                <div class="flex flex-col items-center gap-2 p-4 rounded-xl bg-white shadow-sm border border-green-100/60"><i data-lucide="line-chart" class="w-7 h-7 text-green-600"></i><p class="text-xs font-medium text-gray-500">Seguir</p></div>
-                <div class="flex flex-col items-center gap-2 p-4 rounded-xl bg-white shadow-sm border border-green-100/60"><i data-lucide="star" class="w-7 h-7 text-green-600"></i><p class="text-xs font-medium text-gray-500">Personalizar</p></div>
-              </div>
+          <div class="flex-1 w-full max-w-lg lg:max-w-xl flex justify-center">
+            <div class="relative aspect-square w-full max-w-lg">
+              <div class="absolute inset-0 rounded-full bg-gradient-to-br from-green-50 to-green-200/60 border border-green-200/60 shadow-sm"></div>
+              <img src="img/sw_gestion.png" alt="Software de gestión Annonia" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[68%] h-auto shadow-md" style="border-radius: 1.75rem; overflow: hidden;" />
             </div>
           </div>
         </div>
@@ -227,29 +239,20 @@
 
       <!-- Para pacientes -->
       <div class="reveal from-right" style="transition-delay:100ms">
-        <div class="flex flex-col lg:flex-row-reverse items-center gap-10 lg:gap-16">
+        <div class="flex flex-col-reverse lg:flex-row-reverse items-center gap-10 lg:gap-16">
           <div class="flex-1">
-            <span class="inline-block px-3 py-1 rounded-full bg-green-50 text-green-600 text-xs font-semibold mb-4 tracking-wide uppercase">Para pacientes</span>
-            <h3 class="text-2xl sm:text-3xl font-bold tracking-tight mb-4">Portal del paciente con seguimiento nutricional</h3>
-            <p class="text-gray-400 leading-relaxed mb-6">Tus pacientes acceden desde el móvil o el ordenador. Consultan su dieta personalizada, registran su evolución y se comunican contigo de forma directa.</p>
-            <ul class="space-y-3 mb-8">
-              <li class="flex items-start gap-2.5 text-sm text-gray-500"><i data-lucide="check" class="w-4 h-4 text-green-600 shrink-0 mt-0.5"></i>Dieta semanal con horarios personalizados</li>
-              <li class="flex items-start gap-2.5 text-sm text-gray-500"><i data-lucide="check" class="w-4 h-4 text-green-600 shrink-0 mt-0.5"></i>Registro diario de seguimiento y peso</li>
-              <li class="flex items-start gap-2.5 text-sm text-gray-500"><i data-lucide="check" class="w-4 h-4 text-green-600 shrink-0 mt-0.5"></i>Mensajería directa con el nutricionista</li>
-              <li class="flex items-start gap-2.5 text-sm text-gray-500"><i data-lucide="check" class="w-4 h-4 text-green-600 shrink-0 mt-0.5"></i>Lista de la compra automática</li>
-            </ul>
+            <h3 class="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight mb-5 leading-[1.2]">
+              <span class="bg-[#bdd9c5] px-1.5 -mx-0.5">Para pacientes:</span> Portal del paciente con seguimiento nutricional
+            </h3>
+            <p class="text-base sm:text-lg text-gray-500 leading-relaxed mb-7">Tus pacientes acceden desde el móvil o el ordenador. Consultan su dieta personalizada, registran su evolución y se comunican contigo de forma directa.</p>
             <a href="/registro" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-green-600 text-white text-sm font-semibold hover:bg-green-700 transition-all shadow-sm shadow-green-600/20 hover:-translate-y-0.5">
               Descubre el portal <i data-lucide="arrow-right" class="w-4 h-4"></i>
             </a>
           </div>
-          <div class="flex-1 w-full max-w-sm lg:max-w-md">
-            <div class="aspect-[4/3] rounded-2xl bg-gradient-to-br from-green-50 to-green-100/50 border border-green-200/60 flex items-center justify-center shadow-sm">
-              <div class="grid grid-cols-2 gap-4 p-8">
-                <div class="flex flex-col items-center gap-2 p-4 rounded-xl bg-white shadow-sm border border-green-100/60"><i data-lucide="smartphone" class="w-7 h-7 text-green-600"></i><p class="text-xs font-medium text-gray-500">Mi dieta</p></div>
-                <div class="flex flex-col items-center gap-2 p-4 rounded-xl bg-white shadow-sm border border-green-100/60"><i data-lucide="message-square" class="w-7 h-7 text-green-600"></i><p class="text-xs font-medium text-gray-500">Mensajes</p></div>
-                <div class="flex flex-col items-center gap-2 p-4 rounded-xl bg-white shadow-sm border border-green-100/60"><i data-lucide="line-chart" class="w-7 h-7 text-green-600"></i><p class="text-xs font-medium text-gray-500">Evolución</p></div>
-                <div class="flex flex-col items-center gap-2 p-4 rounded-xl bg-white shadow-sm border border-green-100/60"><i data-lucide="share-2" class="w-7 h-7 text-green-600"></i><p class="text-xs font-medium text-gray-500">Compartir</p></div>
-              </div>
+          <div class="flex-1 w-full max-w-lg lg:max-w-xl flex justify-center">
+            <div class="relative aspect-square w-full max-w-lg">
+              <div class="absolute inset-0 rounded-full bg-gradient-to-br from-emerald-50 to-green-100/70 border border-emerald-200/60 shadow-sm"></div>
+              <img src="img/pacientes.png" alt="Portal del paciente Annonia" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[68%] h-auto shadow-md" style="border-radius: 1.75rem; overflow: hidden;" />
             </div>
           </div>
         </div>
@@ -257,29 +260,20 @@
 
       <!-- IA -->
       <div class="reveal from-left" style="transition-delay:100ms">
-        <div class="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
+        <div class="flex flex-col-reverse lg:flex-row items-center gap-10 lg:gap-16">
           <div class="flex-1">
-            <span class="inline-block px-3 py-1 rounded-full bg-green-50 text-green-600 text-xs font-semibold mb-4 tracking-wide uppercase">Inteligencia artificial</span>
-            <h3 class="text-2xl sm:text-3xl font-bold tracking-tight mb-4">Genera planes alimenticios con IA en segundos</h3>
-            <p class="text-gray-400 leading-relaxed mb-6">Nuestra IA analiza el perfil, objetivos y restricciones de cada paciente para proponerte un plan nutricional equilibrado que puedes ajustar antes de asignarlo.</p>
-            <ul class="space-y-3 mb-8">
-              <li class="flex items-start gap-2.5 text-sm text-gray-500"><i data-lucide="check" class="w-4 h-4 text-green-600 shrink-0 mt-0.5"></i>Adaptada a alergias, intolerancias y preferencias</li>
-              <li class="flex items-start gap-2.5 text-sm text-gray-500"><i data-lucide="check" class="w-4 h-4 text-green-600 shrink-0 mt-0.5"></i>Respeta los objetivos calóricos y de macros</li>
-              <li class="flex items-start gap-2.5 text-sm text-gray-500"><i data-lucide="check" class="w-4 h-4 text-green-600 shrink-0 mt-0.5"></i>Sugerencias basadas en la base de datos completa</li>
-              <li class="flex items-start gap-2.5 text-sm text-gray-500"><i data-lucide="check" class="w-4 h-4 text-green-600 shrink-0 mt-0.5"></i>Editable al 100% antes de asignar</li>
-            </ul>
+            <h3 class="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight mb-5 leading-[1.2]">
+              <span class="bg-[#bdd9c5] px-1.5 -mx-0.5">Inteligencia artificial:</span> Genera planes alimenticios con IA en segundos
+            </h3>
+            <p class="text-base sm:text-lg text-gray-500 leading-relaxed mb-7">Nuestra IA analiza el perfil, objetivos y restricciones de cada paciente para proponerte un plan nutricional equilibrado que puedes ajustar antes de asignarlo.</p>
             <a href="/registro" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-green-600 text-white text-sm font-semibold hover:bg-green-700 transition-all shadow-sm shadow-green-600/20 hover:-translate-y-0.5">
               Prueba la IA <i data-lucide="arrow-right" class="w-4 h-4"></i>
             </a>
           </div>
-          <div class="flex-1 w-full max-w-sm lg:max-w-md">
-            <div class="aspect-[4/3] rounded-2xl bg-gradient-to-br from-green-50 to-green-100/50 border border-green-200/60 flex items-center justify-center shadow-sm">
-              <div class="grid grid-cols-2 gap-4 p-8">
-                <div class="flex flex-col items-center gap-2 p-4 rounded-xl bg-white shadow-sm border border-green-100/60"><i data-lucide="brain" class="w-7 h-7 text-green-600"></i><p class="text-xs font-medium text-gray-500">Analizar</p></div>
-                <div class="flex flex-col items-center gap-2 p-4 rounded-xl bg-white shadow-sm border border-green-100/60"><i data-lucide="sparkles" class="w-7 h-7 text-green-600"></i><p class="text-xs font-medium text-gray-500">Generar</p></div>
-                <div class="flex flex-col items-center gap-2 p-4 rounded-xl bg-white shadow-sm border border-green-100/60"><i data-lucide="zap" class="w-7 h-7 text-green-600"></i><p class="text-xs font-medium text-gray-500">Optimizar</p></div>
-                <div class="flex flex-col items-center gap-2 p-4 rounded-xl bg-white shadow-sm border border-green-100/60"><i data-lucide="check" class="w-7 h-7 text-green-600"></i><p class="text-xs font-medium text-gray-500">Validar</p></div>
-              </div>
+          <div class="flex-1 w-full max-w-lg lg:max-w-xl flex justify-center">
+            <div class="relative aspect-square w-full max-w-lg">
+              <div class="absolute inset-0 rounded-full bg-gradient-to-br from-green-100/80 to-emerald-200/50 border border-green-200/60 shadow-sm"></div>
+              <img src="img/planes_ai.png" alt="Generación de planes con IA Annonia" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[68%] h-auto shadow-md" style="border-radius: 1.75rem; overflow: hidden;" />
             </div>
           </div>
         </div>
@@ -290,42 +284,38 @@
 
   <!-- ─── WAVE white → green (top of Trust) ─── -->
   <svg viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-auto block -mb-px">
-    <path d="M0 80V50C240 20 480 40 720 60C960 80 1200 70 1440 40V80H0Z" fill="#16a34a" />
+    <path d="M0 80V50C240 20 480 40 720 60C960 80 1200 70 1440 40V80H0Z" fill="#bdd9c5" />
   </svg>
 
   <!-- ─── TRUST ─── -->
-  <section class="relative bg-green-600 overflow-hidden">
-    <div class="absolute inset-0 pointer-events-none">
-      <div class="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_top_left,rgba(255,255,255,0.08),transparent_60%)]"></div>
-      <div class="absolute bottom-0 right-0 w-full h-full bg-[radial-gradient(ellipse_at_bottom_right,rgba(255,255,255,0.06),transparent_60%)]"></div>
-    </div>
+  <section class="relative bg-[#bdd9c5] overflow-hidden">
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-32">
       <div class="reveal">
-        <div class="max-w-3xl mx-auto text-center mb-14">
-          <h2 class="text-3xl sm:text-4xl font-bold text-white mb-5">Software diseñado para dietistas-nutricionistas</h2>
-          <p class="text-green-100 text-lg leading-relaxed">Cada funcionalidad ha sido pensada para ahorrar tiempo en tu consulta de nutrición y mejorar la experiencia de tus pacientes.</p>
+        <div class="max-w-5xl mx-auto text-center mb-14">
+          <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-5">Software diseñado para <span class="bg-[#9bc4a8] px-2 -mx-0.5 text-white">nutricionistas</span></h2>
+          <p class="text-green-900/70 text-lg leading-relaxed">Cada funcionalidad ha sido pensada para ahorrar tiempo en tu consulta de nutrición y mejorar la experiencia de tus pacientes.</p>
         </div>
       </div>
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 max-w-4xl mx-auto">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-4xl mx-auto">
         <div class="reveal" style="transition-delay:0ms">
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-7 text-center border border-white/10 hover:bg-white/15 transition-colors">
-            <div class="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center mx-auto mb-4"><i data-lucide="shield" class="w-6 h-6 text-green-100"></i></div>
-            <h3 class="font-semibold text-white text-lg mb-1.5">Segura</h3>
-            <p class="text-green-200 text-sm leading-relaxed">Datos cifrados, servidores en la UE, cumplimiento RGPD</p>
+          <div class="bg-white rounded-2xl p-8 text-center border border-white shadow-xl shadow-green-900/10 hover:shadow-2xl hover:shadow-green-900/15 hover:-translate-y-2 transition-all duration-300">
+            <div class="w-14 h-14 rounded-2xl bg-green-50 flex items-center justify-center mx-auto mb-5 shadow-sm shadow-green-900/5"><i data-lucide="shield" class="w-7 h-7 text-green-700"></i></div>
+            <h3 class="font-bold text-green-900 text-lg mb-2">Segura</h3>
+            <p class="text-green-900/60 text-sm leading-relaxed">Datos cifrados, servidores en la UE, cumplimiento RGPD</p>
           </div>
         </div>
         <div class="reveal" style="transition-delay:150ms">
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-7 text-center border border-white/10 hover:bg-white/15 transition-colors">
-            <div class="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center mx-auto mb-4"><i data-lucide="globe" class="w-6 h-6 text-green-100"></i></div>
-            <h3 class="font-semibold text-white text-lg mb-1.5">Accesible</h3>
-            <p class="text-green-200 text-sm leading-relaxed">Desde cualquier dispositivo, en cualquier momento</p>
+          <div class="bg-white rounded-2xl p-8 text-center border border-white shadow-xl shadow-green-900/10 hover:shadow-2xl hover:shadow-green-900/15 hover:-translate-y-2 transition-all duration-300">
+            <div class="w-14 h-14 rounded-2xl bg-green-50 flex items-center justify-center mx-auto mb-5 shadow-sm shadow-green-900/5"><i data-lucide="globe" class="w-7 h-7 text-green-700"></i></div>
+            <h3 class="font-bold text-green-900 text-lg mb-2">Accesible</h3>
+            <p class="text-green-900/60 text-sm leading-relaxed">Desde cualquier dispositivo, en cualquier momento</p>
           </div>
         </div>
         <div class="reveal" style="transition-delay:300ms">
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-7 text-center border border-white/10 hover:bg-white/15 transition-colors">
-            <div class="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center mx-auto mb-4"><i data-lucide="zap" class="w-6 h-6 text-green-100"></i></div>
-            <h3 class="font-semibold text-white text-lg mb-1.5">Rápida</h3>
-            <p class="text-green-200 text-sm leading-relaxed">Interfaz ligera optimizada para tu día a día</p>
+          <div class="bg-white rounded-2xl p-8 text-center border border-white shadow-xl shadow-green-900/10 hover:shadow-2xl hover:shadow-green-900/15 hover:-translate-y-2 transition-all duration-300">
+            <div class="w-14 h-14 rounded-2xl bg-green-50 flex items-center justify-center mx-auto mb-5 shadow-sm shadow-green-900/5"><i data-lucide="zap" class="w-7 h-7 text-green-700"></i></div>
+            <h3 class="font-bold text-green-900 text-lg mb-2">Rápida</h3>
+            <p class="text-green-900/60 text-sm leading-relaxed">Interfaz ligera optimizada para tu día a día</p>
           </div>
         </div>
       </div>
@@ -334,271 +324,113 @@
 
   <!-- ─── WAVE green → white ─── -->
   <svg viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-auto block -mt-px">
-    <path d="M0 0V30C240 60 480 40 720 20C960 0 1200 10 1440 40V0H0Z" fill="#16a34a" />
+    <path d="M0 0V30C240 60 480 40 720 20C960 0 1200 10 1440 40V0H0Z" fill="#bdd9c5" />
   </svg>
-
-  <!-- ─── FEATURES (laptop mockup) ─── -->
-  <section id="funcionalidades" class="py-24 sm:py-32">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="reveal" style="transition-delay:100ms">
-        <div class="max-w-5xl mx-auto">
-          <!-- Screen bezel -->
-          <div class="bg-gray-800 rounded-t-2xl p-2 pt-3">
-            <div class="flex items-center gap-1.5 px-2 mb-2">
-              <div class="w-2.5 h-2.5 rounded-full bg-red-400/80"></div>
-              <div class="w-2.5 h-2.5 rounded-full bg-yellow-400/80"></div>
-              <div class="w-2.5 h-2.5 rounded-full bg-green-400/80"></div>
-              <div class="flex-1 mx-3 h-5 rounded-md bg-gray-700/80 flex items-center justify-center">
-                <span class="text-[10px] text-gray-400">annonia.com</span>
-              </div>
-            </div>
-            <div class="bg-white rounded-sm p-6 sm:p-8">
-              <div class="text-center mb-8">
-                <h2 class="text-2xl sm:text-3xl font-bold tracking-tight mb-2">Todo lo que necesita tu consulta de nutrición</h2>
-                <p class="text-gray-400 text-sm">Desde la primera consulta dietética hasta el seguimiento nutricional a largo plazo.</p>
-              </div>
-              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="group relative p-5 rounded-xl border border-green-100 bg-white hover:border-green-300 hover:shadow-lg hover:shadow-green-50 transition-all duration-300">
-                  <div class="w-10 h-10 rounded-lg bg-green-50 group-hover:bg-green-100 flex items-center justify-center mb-3 transition-colors"><i data-lucide="utensils" class="w-5 h-5 text-green-600"></i></div>
-                  <h3 class="font-semibold text-gray-900 text-sm mb-1">Dietas personalizadas</h3>
-                  <p class="text-xs text-gray-400 leading-relaxed">Planes alimenticios completos con +2.600 alimentos y cálculo automático de macronutrientes.</p>
-                </div>
-                <div class="group relative p-5 rounded-xl border border-green-100 bg-white hover:border-green-300 hover:shadow-lg hover:shadow-green-50 transition-all duration-300">
-                  <div class="w-10 h-10 rounded-lg bg-green-50 group-hover:bg-green-100 flex items-center justify-center mb-3 transition-colors"><i data-lucide="users" class="w-5 h-5 text-green-600"></i></div>
-                  <h3 class="font-semibold text-gray-900 text-sm mb-1">Gestión de pacientes</h3>
-                  <p class="text-xs text-gray-400 leading-relaxed">Ficha clínica completa, historial nutricional, medidas corporales y seguimiento en un solo lugar.</p>
-                </div>
-                <div class="group relative p-5 rounded-xl border border-green-100 bg-white hover:border-green-300 hover:shadow-lg hover:shadow-green-50 transition-all duration-300">
-                  <div class="w-10 h-10 rounded-lg bg-green-50 group-hover:bg-green-100 flex items-center justify-center mb-3 transition-colors"><i data-lucide="brain" class="w-5 h-5 text-green-600"></i></div>
-                  <h3 class="font-semibold text-gray-900 text-sm mb-1">Generación de dietas con IA</h3>
-                  <p class="text-xs text-gray-400 leading-relaxed">Crea planes nutricionales optimizados con inteligencia artificial, adaptados a cada paciente.</p>
-                </div>
-                <div class="group relative p-5 rounded-xl border border-green-100 bg-white hover:border-green-300 hover:shadow-lg hover:shadow-green-50 transition-all duration-300">
-                  <div class="w-10 h-10 rounded-lg bg-green-50 group-hover:bg-green-100 flex items-center justify-center mb-3 transition-colors"><i data-lucide="calendar-days" class="w-5 h-5 text-green-600"></i></div>
-                  <h3 class="font-semibold text-gray-900 text-sm mb-1">Agenda de consultas</h3>
-                  <p class="text-xs text-gray-400 leading-relaxed">Gestión de citas presenciales y online con Google Calendar y Google Meet integrados.</p>
-                </div>
-                <div class="group relative p-5 rounded-xl border border-green-100 bg-white hover:border-green-300 hover:shadow-lg hover:shadow-green-50 transition-all duration-300">
-                  <div class="w-10 h-10 rounded-lg bg-green-50 group-hover:bg-green-100 flex items-center justify-center mb-3 transition-colors"><i data-lucide="message-square" class="w-5 h-5 text-green-600"></i></div>
-                  <h3 class="font-semibold text-gray-900 text-sm mb-1">Mensajería con pacientes</h3>
-                  <p class="text-xs text-gray-400 leading-relaxed">Comunicación directa y segura con tus pacientes. Archivos, imágenes y notificaciones.</p>
-                </div>
-                <div class="group relative p-5 rounded-xl border border-green-100 bg-white hover:border-green-300 hover:shadow-lg hover:shadow-green-50 transition-all duration-300">
-                  <div class="w-10 h-10 rounded-lg bg-green-50 group-hover:bg-green-100 flex items-center justify-center mb-3 transition-colors"><i data-lucide="smartphone" class="w-5 h-5 text-green-600"></i></div>
-                  <h3 class="font-semibold text-gray-900 text-sm mb-1">Portal del paciente</h3>
-                  <p class="text-xs text-gray-400 leading-relaxed">Tus pacientes acceden a su dieta, seguimiento y recomendaciones desde cualquier dispositivo.</p>
-                </div>
-                <div class="group relative p-5 rounded-xl border border-green-100 bg-white hover:border-green-300 hover:shadow-lg hover:shadow-green-50 transition-all duration-300">
-                  <div class="w-10 h-10 rounded-lg bg-green-50 group-hover:bg-green-100 flex items-center justify-center mb-3 transition-colors"><i data-lucide="line-chart" class="w-5 h-5 text-green-600"></i></div>
-                  <h3 class="font-semibold text-gray-900 text-sm mb-1">Informes nutricionales</h3>
-                  <p class="text-xs text-gray-400 leading-relaxed">Gráficas de evolución interactivas e informes PDF profesionales con un clic.</p>
-                </div>
-                <div class="group relative p-5 rounded-xl border border-green-100 bg-white hover:border-green-300 hover:shadow-lg hover:shadow-green-50 transition-all duration-300">
-                  <div class="w-10 h-10 rounded-lg bg-green-50 group-hover:bg-green-100 flex items-center justify-center mb-3 transition-colors"><i data-lucide="share-2" class="w-5 h-5 text-green-600"></i></div>
-                  <h3 class="font-semibold text-gray-900 text-sm mb-1">Compartir y exportar</h3>
-                  <p class="text-xs text-gray-400 leading-relaxed">Comparte planes alimenticios por enlace, exporta PDFs y envía todo por email.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- Laptop base -->
-          <div class="relative mx-auto">
-            <div class="bg-gray-300 h-4 rounded-b-lg mx-16"></div>
-            <div class="bg-gray-200 h-1.5 rounded-b-xl mx-8"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ─── PRICING ─── -->
-  <section id="precios" class="py-24 sm:py-32 bg-gray-50/50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="reveal">
-        <div class="max-w-2xl mx-auto text-center mb-16">
-          <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-green-50 border border-green-200/80 text-green-700 text-sm font-medium mb-6">
-            <i data-lucide="zap" class="w-4 h-4"></i>
-            14 días de prueba gratuita
-          </div>
-          <h2 class="text-3xl sm:text-4xl font-bold tracking-tight mb-4">Planes simples y transparentes</h2>
-          <p class="text-gray-400 text-lg">Sin compromisos. Cancela cuando quieras.</p>
-        </div>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-        <div class="reveal" style="transition-delay:0ms">
-          <div class="relative rounded-2xl border-2 bg-white p-8 flex flex-col h-full border-green-100">
-            <div class="mb-6">
-              <h3 class="text-xl font-bold mb-1">Básico</h3>
-              <p class="text-sm text-gray-400">Ideal para dietistas que empiezan.</p>
-            </div>
-            <div class="flex items-baseline gap-1 mb-8">
-              <span class="text-5xl font-bold text-gray-900">9,99€</span>
-              <span class="text-gray-300">/mes</span>
-            </div>
-            <a href="/registro?plan=basico" class="w-full text-center py-3.5 rounded-xl font-semibold text-sm transition-all mb-8 block bg-green-50 text-green-700 hover:bg-green-100">
-              Empezar 14 días gratis
-            </a>
-            <div class="space-y-3 flex-1">
-              <div class="flex items-start gap-2.5"><i data-lucide="check" class="w-4 h-4 text-green-600 shrink-0 mt-0.5"></i><span class="text-sm text-gray-500">Hasta 25 pacientes activos</span></div>
-              <div class="flex items-start gap-2.5"><i data-lucide="check" class="w-4 h-4 text-green-600 shrink-0 mt-0.5"></i><span class="text-sm text-gray-500">Planes alimenticios ilimitados</span></div>
-              <div class="flex items-start gap-2.5"><i data-lucide="check" class="w-4 h-4 text-green-600 shrink-0 mt-0.5"></i><span class="text-sm text-gray-500">Base de datos de 2.600+ alimentos</span></div>
-              <div class="flex items-start gap-2.5"><i data-lucide="check" class="w-4 h-4 text-green-600 shrink-0 mt-0.5"></i><span class="text-sm text-gray-500">Recetas personalizadas</span></div>
-              <div class="flex items-start gap-2.5"><i data-lucide="check" class="w-4 h-4 text-green-600 shrink-0 mt-0.5"></i><span class="text-sm text-gray-500">Portal del paciente</span></div>
-              <div class="flex items-start gap-2.5"><i data-lucide="check" class="w-4 h-4 text-green-600 shrink-0 mt-0.5"></i><span class="text-sm text-gray-500">Seguimiento de medidas</span></div>
-            </div>
-          </div>
-        </div>
-        <div class="reveal" style="transition-delay:150ms">
-          <div class="relative rounded-2xl border-2 bg-white p-8 flex flex-col h-full border-green-600 shadow-xl shadow-green-100/50">
-            <div class="absolute -top-3.5 left-1/2 -translate-x-1/2">
-              <span class="inline-flex items-center gap-1 px-4 py-1 rounded-full bg-green-600 text-white text-xs font-bold uppercase tracking-wide">
-                <i data-lucide="star" class="w-3 h-3"></i> Más popular
-              </span>
-            </div>
-            <div class="mb-6">
-              <h3 class="text-xl font-bold mb-1">Profesional</h3>
-              <p class="text-sm text-gray-400">Para consultas establecidas.</p>
-            </div>
-            <div class="flex items-baseline gap-1 mb-8">
-              <span class="text-5xl font-bold text-gray-900">11,99€</span>
-              <span class="text-gray-300">/mes</span>
-            </div>
-            <a href="/registro?plan=profesional" class="w-full text-center py-3.5 rounded-xl font-semibold text-sm transition-all mb-8 block bg-green-600 text-white hover:bg-green-700 shadow-sm shadow-green-600/20">
-              Empezar 14 días gratis
-            </a>
-            <div class="space-y-3 flex-1">
-              <div class="flex items-start gap-2.5"><i data-lucide="check" class="w-4 h-4 text-green-600 shrink-0 mt-0.5"></i><span class="text-sm text-gray-500">Todo lo del plan Básico</span></div>
-              <div class="flex items-start gap-2.5"><i data-lucide="check" class="w-4 h-4 text-green-600 shrink-0 mt-0.5"></i><span class="text-sm text-gray-500">Pacientes ilimitados</span></div>
-              <div class="flex items-start gap-2.5"><i data-lucide="check" class="w-4 h-4 text-green-600 shrink-0 mt-0.5"></i><span class="text-sm text-gray-500">Generación de dietas con IA</span></div>
-              <div class="flex items-start gap-2.5"><i data-lucide="check" class="w-4 h-4 text-green-600 shrink-0 mt-0.5"></i><span class="text-sm text-gray-500">Exportación de informes PDF</span></div>
-              <div class="flex items-start gap-2.5"><i data-lucide="check" class="w-4 h-4 text-green-600 shrink-0 mt-0.5"></i><span class="text-sm text-gray-500">Plantillas de planes</span></div>
-              <div class="flex items-start gap-2.5"><i data-lucide="check" class="w-4 h-4 text-green-600 shrink-0 mt-0.5"></i><span class="text-sm text-gray-500">Soporte prioritario 24/7</span></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
 
   <!-- ─── FAQ ─── -->
   <section id="faq" class="py-24 sm:py-32">
-    <div class="max-w-3xl mx-auto px-4 sm:px-6">
-      <div class="reveal">
-        <div class="text-center mb-14">
-          <h2 class="text-3xl sm:text-4xl font-bold tracking-tight mb-4">Preguntas frecuentes</h2>
-          <p class="text-gray-400">¿Tienes dudas? Aquí resolvemos las más comunes.</p>
-        </div>
-      </div>
-      <div class="space-y-3">
-        <div class="reveal" style="transition-delay:0ms">
-          <details class="group bg-white rounded-2xl border border-green-100 overflow-hidden shadow-sm">
-            <summary class="flex items-center justify-between p-5 sm:p-6 cursor-pointer font-medium text-gray-900 hover:bg-green-50/50 transition-colors">
-              ¿Puedo probar Annonia gratis?
-              <i data-lucide="chevron-down" class="chevron w-5 h-5 text-green-400 shrink-0 ml-4"></i>
-            </summary>
-            <div class="px-5 sm:px-6 pb-5 sm:pb-6 text-sm text-gray-400 leading-relaxed">Sí, tienes 14 días de prueba gratuita con acceso completo. No necesitas tarjeta de crédito.</div>
-          </details>
-        </div>
-        <div class="reveal" style="transition-delay:80ms">
-          <details class="group bg-white rounded-2xl border border-green-100 overflow-hidden shadow-sm">
-            <summary class="flex items-center justify-between p-5 sm:p-6 cursor-pointer font-medium text-gray-900 hover:bg-green-50/50 transition-colors">
-              ¿Mis datos y los de mis pacientes están seguros?
-              <i data-lucide="chevron-down" class="chevron w-5 h-5 text-green-400 shrink-0 ml-4"></i>
-            </summary>
-            <div class="px-5 sm:px-6 pb-5 sm:pb-6 text-sm text-gray-400 leading-relaxed">Absolutamente. Usamos encriptación, servidores en la UE y cumplimos con el RGPD. La seguridad de los datos clínicos es nuestra prioridad.</div>
-          </details>
-        </div>
-        <div class="reveal" style="transition-delay:160ms">
-          <details class="group bg-white rounded-2xl border border-green-100 overflow-hidden shadow-sm">
-            <summary class="flex items-center justify-between p-5 sm:p-6 cursor-pointer font-medium text-gray-900 hover:bg-green-50/50 transition-colors">
-              ¿Puedo cambiar de plan o cancelar?
-              <i data-lucide="chevron-down" class="chevron w-5 h-5 text-green-400 shrink-0 ml-4"></i>
-            </summary>
-            <div class="px-5 sm:px-6 pb-5 sm:pb-6 text-sm text-gray-400 leading-relaxed">Sí, sin compromisos. Cambia o cancela desde Ajustes. Mantienes acceso hasta el final del periodo pagado.</div>
-          </details>
-        </div>
-        <div class="reveal" style="transition-delay:240ms">
-          <details class="group bg-white rounded-2xl border border-green-100 overflow-hidden shadow-sm">
-            <summary class="flex items-center justify-between p-5 sm:p-6 cursor-pointer font-medium text-gray-900 hover:bg-green-50/50 transition-colors">
-              ¿Mis pacientes necesitan crear cuenta?
-              <i data-lucide="chevron-down" class="chevron w-5 h-5 text-green-400 shrink-0 ml-4"></i>
-            </summary>
-            <div class="px-5 sm:px-6 pb-5 sm:pb-6 text-sm text-gray-400 leading-relaxed">No. Tú les envías un acceso con email y PIN. Ellos acceden al portal sin registrarse.</div>
-          </details>
-        </div>
-        <div class="reveal" style="transition-delay:320ms">
-          <details class="group bg-white rounded-2xl border border-green-100 overflow-hidden shadow-sm">
-            <summary class="flex items-center justify-between p-5 sm:p-6 cursor-pointer font-medium text-gray-900 hover:bg-green-50/50 transition-colors">
-              ¿Funciona en el móvil?
-              <i data-lucide="chevron-down" class="chevron w-5 h-5 text-green-400 shrink-0 ml-4"></i>
-            </summary>
-            <div class="px-5 sm:px-6 pb-5 sm:pb-6 text-sm text-gray-400 leading-relaxed">Sí, todo está optimizado para móvil, tablet y escritorio. Es una web app progresiva que puedes instalar.</div>
-          </details>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ─── CTA FINAL ─── -->
-  <section class="py-24 sm:py-32">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="reveal">
-        <div class="relative rounded-3xl bg-gradient-to-br from-green-600 to-green-700 overflow-hidden px-8 sm:px-16 py-16 sm:py-20 text-center">
-          <div class="absolute inset-0 pointer-events-none">
-            <div class="absolute top-0 right-0 w-72 h-72 rounded-full bg-white/5 blur-3xl"></div>
-            <div class="absolute bottom-0 left-0 w-56 h-56 rounded-full bg-white/5 blur-3xl"></div>
+        <div class="max-w-3xl mx-auto text-center mb-14 sm:mb-16">
+          <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight mb-5">Respuestas <span class="bg-[#bdd9c5] px-2 -mx-0.5">más cerca</span> que nunca</h2>
+          <p class="text-gray-500 text-base sm:text-lg leading-relaxed">Resolvemos las preguntas más comunes sobre Annonia y cómo puede transformar tu consulta de nutrición.</p>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center max-w-6xl mx-auto">
+        <!-- Accordion list -->
+        <div class="reveal from-left">
+          <div class="divide-y divide-gray-200 border-l-2 border-[#bdd9c5] pl-6 sm:pl-8">
+            <details class="group py-5 first:pt-0">
+              <summary class="flex items-center justify-between cursor-pointer text-lg sm:text-xl font-semibold text-gray-900 hover:text-green-700 transition-colors">
+                <span>¿Puedo probar Annonia gratis?</span>
+                <i data-lucide="chevron-right" class="chevron w-5 h-5 text-gray-400 shrink-0 ml-4"></i>
+              </summary>
+              <div class="pt-3 text-gray-500 leading-relaxed">Sí, tienes 14 días de prueba gratuita con acceso completo. No necesitas tarjeta de crédito.</div>
+            </details>
+            <details class="group py-5">
+              <summary class="flex items-center justify-between cursor-pointer text-lg sm:text-xl font-semibold text-gray-900 hover:text-green-700 transition-colors">
+                <span>¿Mis datos y los de mis pacientes están seguros?</span>
+                <i data-lucide="chevron-right" class="chevron w-5 h-5 text-gray-400 shrink-0 ml-4"></i>
+              </summary>
+              <div class="pt-3 text-gray-500 leading-relaxed">Absolutamente. Usamos encriptación, servidores en la UE y cumplimos con el RGPD. La seguridad de los datos clínicos es nuestra prioridad.</div>
+            </details>
+            <details class="group py-5">
+              <summary class="flex items-center justify-between cursor-pointer text-lg sm:text-xl font-semibold text-gray-900 hover:text-green-700 transition-colors">
+                <span>¿Puedo cambiar de plan o cancelar?</span>
+                <i data-lucide="chevron-right" class="chevron w-5 h-5 text-gray-400 shrink-0 ml-4"></i>
+              </summary>
+              <div class="pt-3 text-gray-500 leading-relaxed">Sí, sin compromisos. Cambia o cancela desde Ajustes. Mantienes acceso hasta el final del periodo pagado.</div>
+            </details>
+            <details class="group py-5">
+              <summary class="flex items-center justify-between cursor-pointer text-lg sm:text-xl font-semibold text-gray-900 hover:text-green-700 transition-colors">
+                <span>¿Mis pacientes necesitan crear cuenta?</span>
+                <i data-lucide="chevron-right" class="chevron w-5 h-5 text-gray-400 shrink-0 ml-4"></i>
+              </summary>
+              <div class="pt-3 text-gray-500 leading-relaxed">No. Tú les envías un acceso con email y PIN. Ellos acceden al portal sin registrarse.</div>
+            </details>
+            <details class="group py-5 last:pb-0">
+              <summary class="flex items-center justify-between cursor-pointer text-lg sm:text-xl font-semibold text-gray-900 hover:text-green-700 transition-colors">
+                <span>¿Funciona en el móvil?</span>
+                <i data-lucide="chevron-right" class="chevron w-5 h-5 text-gray-400 shrink-0 ml-4"></i>
+              </summary>
+              <div class="pt-3 text-gray-500 leading-relaxed">Sí, todo está optimizado para móvil, tablet y escritorio. Es una web app progresiva que puedes instalar.</div>
+            </details>
           </div>
-          <div class="relative">
-            <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">Empieza a digitalizar tu consulta de nutrición</h2>
-            <p class="text-green-100 text-lg mb-10 max-w-xl mx-auto leading-relaxed">Únete a los dietistas-nutricionistas que confían en Annonia para ofrecer dietas personalizadas y un seguimiento nutricional excepcional.</p>
-            <a href="/registro" class="inline-flex items-center gap-2 px-8 py-4 text-base font-semibold rounded-2xl bg-white text-green-700 hover:bg-green-50 transition-all shadow-lg hover:-translate-y-0.5">
-              Crear cuenta gratis
-              <i data-lucide="arrow-right" class="w-5 h-5"></i>
-            </a>
-            <p class="mt-5 text-sm text-green-200/80">14 días gratis · Sin tarjeta · Cancela cuando quieras</p>
+        </div>
+        <!-- Image -->
+        <div class="reveal from-right flex justify-center">
+          <div class="relative w-full max-w-[240px] sm:max-w-[280px]">
+            <div class="absolute -inset-6 bg-gradient-to-br from-green-100/60 to-[#bdd9c5]/40 rounded-[2rem] blur-2xl"></div>
+            <img src="img/pacientes.png" alt="Annonia — portal del paciente" class="relative w-full h-auto rounded-2xl shadow-2xl shadow-green-900/15" />
           </div>
         </div>
       </div>
     </div>
   </section>
 
+  <!-- ─── WAVE white → dark (top of footer) ─── -->
+  <svg viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-auto block -mb-px">
+    <path d="M0 80V50C240 20 480 40 720 60C960 80 1200 70 1440 40V80H0Z" fill="#2d3748" />
+  </svg>
+
   <!-- ─── FOOTER ─── -->
-  <footer class="border-t border-green-100 bg-white">
+  <footer class="bg-[#2d3748]">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
-        <div class="col-span-2 md:col-span-1">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 mb-12">
+        <div>
           <div class="flex items-center gap-2 mb-4">
-            <i data-lucide="leaf" class="w-6 h-6 text-green-600"></i>
-            <span class="text-lg font-bold">Annonia</span>
+            <i data-lucide="leaf" class="w-6 h-6 text-green-400"></i>
+            <span class="text-lg font-bold text-white">Annonia</span>
           </div>
-          <p class="text-sm text-gray-400 leading-relaxed">Software de nutrición profesional para dietistas-nutricionistas. Gestión de consulta, dietas personalizadas y seguimiento de pacientes.</p>
+          <p class="text-sm text-gray-400 leading-relaxed max-w-md">Software de nutrición profesional para dietistas-nutricionistas. Gestión de consulta, dietas personalizadas y seguimiento de pacientes.</p>
         </div>
-        <div>
-          <p class="text-sm font-semibold text-gray-900 mb-4">Producto</p>
-          <ul class="space-y-2.5 text-sm text-gray-400">
-            <li><a href="#funcionalidades" class="hover:text-green-600 transition-colors">Funcionalidades</a></li>
-            <li><a href="#precios" class="hover:text-green-600 transition-colors">Precios</a></li>
-            <li><a href="#faq" class="hover:text-green-600 transition-colors">FAQ</a></li>
-          </ul>
-        </div>
-        <div>
-          <p class="text-sm font-semibold text-gray-900 mb-4">Acceso</p>
-          <ul class="space-y-2.5 text-sm text-gray-400">
-            <li><a href="/login" class="hover:text-green-600 transition-colors">Iniciar sesión</a></li>
-            <li><a href="/registro" class="hover:text-green-600 transition-colors">Crear cuenta</a></li>
-            <li><a href="/paciente/login" class="hover:text-green-600 transition-colors">Portal pacientes</a></li>
-          </ul>
-        </div>
-        <div>
-          <p class="text-sm font-semibold text-gray-900 mb-4">Legal</p>
-          <ul class="space-y-2.5 text-sm text-gray-400">
-            <li><a href="/legal/terminos" class="hover:text-green-600 transition-colors">Términos y condiciones</a></li>
-            <li><a href="/legal/privacidad" class="hover:text-green-600 transition-colors">Política de privacidad</a></li>
-            <li><a href="/legal/cookies" class="hover:text-green-600 transition-colors">Política de cookies</a></li>
-          </ul>
+        <div class="grid grid-cols-3 gap-4 sm:gap-6">
+          <div>
+            <p class="text-sm font-semibold text-white mb-4">Producto</p>
+            <ul class="space-y-2.5 text-sm text-gray-400">
+              <li><a href="#como-funciona" class="hover:text-green-300 transition-colors">Cómo funciona</a></li>
+              <li><a href="#faq" class="hover:text-green-300 transition-colors">FAQ</a></li>
+            </ul>
+          </div>
+          <div>
+            <p class="text-sm font-semibold text-white mb-4">Acceso</p>
+            <ul class="space-y-2.5 text-sm text-gray-400">
+              <li><a href="/login" class="hover:text-green-300 transition-colors">Iniciar sesión</a></li>
+              <li><a href="/registro" class="hover:text-green-300 transition-colors">Crear cuenta</a></li>
+              <li><a href="/paciente/login" class="hover:text-green-300 transition-colors">Portal pacientes</a></li>
+            </ul>
+          </div>
+          <div>
+            <p class="text-sm font-semibold text-white mb-4">Legal</p>
+            <ul class="space-y-2.5 text-sm text-gray-400">
+              <li><a href="/legal/terminos" class="hover:text-green-300 transition-colors">Términos y condiciones</a></li>
+              <li><a href="/legal/privacidad" class="hover:text-green-300 transition-colors">Política de privacidad</a></li>
+              <li><a href="/legal/cookies" class="hover:text-green-300 transition-colors">Política de cookies</a></li>
+            </ul>
+          </div>
         </div>
       </div>
-      <div class="border-t border-green-100 pt-8 text-sm text-gray-300 text-center">
+      <div class="border-t border-white/10 pt-8 text-sm text-gray-500 text-center">
         &copy; 2026 Annonia. Todos los derechos reservados.
       </div>
     </div>
@@ -620,6 +452,100 @@
     }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
 
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // Mobile menu toggle
+    const hamburgerBtn = document.getElementById('hamburger-btn');
+    const closeMenuBtn = document.getElementById('close-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const mobileOverlay = document.getElementById('mobile-overlay');
+
+    function openMenu() {
+      mobileMenu.classList.add('open');
+      mobileOverlay.classList.add('open');
+      hamburgerBtn.classList.add('hamburger-active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeMenu() {
+      mobileMenu.classList.remove('open');
+      mobileOverlay.classList.remove('open');
+      hamburgerBtn.classList.remove('hamburger-active');
+      document.body.style.overflow = '';
+    }
+
+    hamburgerBtn.addEventListener('click', () => {
+      if (mobileMenu.classList.contains('open')) {
+        closeMenu();
+      } else {
+        openMenu();
+      }
+    });
+
+    closeMenuBtn.addEventListener('click', closeMenu);
+    mobileOverlay.addEventListener('click', closeMenu);
+
+    // Close menu when clicking a link
+    document.querySelectorAll('.mobile-menu-link').forEach(link => {
+      link.addEventListener('click', closeMenu);
+    });
+
+    // Sticky header: change style on scroll
+    const header = document.getElementById('main-header');
+    const heroSection = document.querySelector('section.relative.bg-green-50');
+
+    function updateHeader() {
+      const heroBottom = heroSection.getBoundingClientRect().bottom;
+      const scrolled = heroBottom <= 64; // 64px = header height (h-16)
+
+      if (scrolled) {
+        header.classList.add('bg-white', 'shadow-md');
+        header.querySelectorAll('.header-icon').forEach(el => {
+          el.classList.remove('text-white');
+          el.classList.add('text-green-600');
+          el.style.filter = 'none';
+        });
+        header.querySelectorAll('.header-logo').forEach(el => {
+          el.classList.remove('text-white');
+          el.classList.add('text-gray-900');
+          el.style.filter = 'none';
+        });
+        header.querySelectorAll('.header-link').forEach(el => {
+          el.classList.remove('text-white');
+          el.classList.add('text-gray-700');
+          el.style.filter = 'none';
+        });
+        header.querySelectorAll('.hamburger-line').forEach(el => {
+          el.classList.remove('bg-white');
+          el.classList.add('bg-gray-800');
+          el.style.filter = 'none';
+        });
+      } else {
+        header.classList.remove('bg-white', 'shadow-md');
+        header.querySelectorAll('.header-icon').forEach(el => {
+          el.classList.add('text-white');
+          el.classList.remove('text-green-600');
+          el.style.filter = '';
+        });
+        header.querySelectorAll('.header-logo').forEach(el => {
+          el.classList.add('text-white');
+          el.classList.remove('text-gray-900');
+          el.style.filter = '';
+        });
+        header.querySelectorAll('.header-link').forEach(el => {
+          el.classList.add('text-white');
+          el.classList.remove('text-gray-700');
+          el.style.filter = '';
+        });
+        header.querySelectorAll('.hamburger-line').forEach(el => {
+          el.classList.add('bg-white');
+          el.classList.remove('bg-gray-800');
+          el.style.filter = '';
+        });
+      }
+    }
+
+    window.addEventListener('scroll', updateHeader, { passive: true });
+    updateHeader();
   </script>
 </body>
 </html>
